@@ -12,6 +12,7 @@ public class JdbcCustomerDao implements CustomerDao {
 
     private final JdbcTemplate jdbcTemplate;
 
+    //pass datasource into constructor
     public JdbcCustomerDao(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
