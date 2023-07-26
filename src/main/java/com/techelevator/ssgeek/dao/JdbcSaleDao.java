@@ -2,6 +2,7 @@ package com.techelevator.ssgeek.dao;
 
 import com.techelevator.ssgeek.model.Sale;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -49,5 +50,17 @@ public class JdbcSaleDao implements SaleDao {
 
     }
 
+    private Sale mapRowToSale(SqlRowSet results) {
+        Sale sale = new Sale();
+        sale.setSaleId(results.getInt("sale_id"));
+        sale.setCustomerId(results.getInt("customer_id"));
+        if (results.getDate("sale_date").toLocalDate() != null) {
+            sale.setSaleDate(results.getDate("sale_Date").toLocalDate());
+        }
+        if (results.getDate("ship_date").toLocalDate() != null) {
+            sale.setShipDate(results.getDate("ship_date").toLocalDate());
+        }
+        return sale;
+    }
 
 }
