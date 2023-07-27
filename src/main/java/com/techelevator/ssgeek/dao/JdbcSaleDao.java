@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcSaleDao implements SaleDao {
@@ -17,12 +18,29 @@ public class JdbcSaleDao implements SaleDao {
 
     @Override
     public Sale getSale(int saleId) {
-        return null;
+        Sale sale = null;
+        String sql = "SELECT * FROM sale WHERE sale_id = ?";
+        SqlRowSet row = jdbcTemplate.queryForRowSet(sql, saleId);
+        if (row.next()) {
+            sale = mapRowToSale(row);
+        }
+        return sale;
     }
 
     @Override
     public List<Sale> getSalesUnshipped() {
-        return null;
+        List<Sale> results = new ArrayList<>();
+        String sql = "SELECT sale.sale_id, sale.customer_id, customer.name, sale.sale_date, sale.ship_date FROM sale " +
+                    "JOIN customer ON customer.customer_id = sale.customer_id " +
+                    "WHERE sale.ship_date IS NULL " +
+                    "ORDER BY sale_id";
+        SqlRowSet row = jdbcTemplate.queryForRowSet(sql);
+        while(row.next()) {
+            Sale sale = mapRowToSale(row);
+            sale.setCustomerName("name");
+            results.add(sale);
+        }
+        return results;
     }
 
     @Override
