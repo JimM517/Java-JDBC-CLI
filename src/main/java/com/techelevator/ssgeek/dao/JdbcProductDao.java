@@ -19,7 +19,13 @@ public class JdbcProductDao implements ProductDao {
 
     @Override
     public Product getProduct(int productId) {
-        return null;
+        Product product = null;
+        String sql = "SELECT * FROM product WHERE product_id = ?";
+        SqlRowSet row = jdbcTemplate.queryForRowSet(sql, productId);
+        if (row.next()) {
+            product = mapRowToProduct(row);
+        }
+        return product;
     }
 
     @Override
@@ -36,16 +42,31 @@ public class JdbcProductDao implements ProductDao {
 
     @Override
     public List<Product> getProductsWithNoSales() {
-        return null;
+        List<Product> results = new ArrayList<>();
+        String sql = "SELECT * FROM product " +
+                    "JOIN line_item ON line_item.product_id = product.product_id " +
+                    "JOIN sale ON sale.sale_id = line_item.sale_id " +
+                    "WHERE sale.sale_date IS NULL " +
+                    "ORDER BY product.product_id";
+        SqlRowSet row = jdbcTemplate.queryForRowSet(sql);
+        if (row.next()) {
+            Product product = mapRowToProduct(row);
+            results.add(product);
+        }
+        return results;
     }
 
     @Override
     public Product createProduct(Product newProduct) {
-        return null;
+        String sql = "INSERT INTO product (name, description, price, image_name) VALUES (?, ?, ?, ?) RETURNING product_id";
+        int newId = jdbcTemplate.queryForObject(sql, int.class, newProduct.getName(), newProduct.getDescription(), newProduct.getPrice(), newProduct.getImageName());
+        newProduct.setProductId(newId);
+        return newProduct;
     }
 
     @Override
     public void updateProduct(Product updatedProduct) {
+
 
     }
 
