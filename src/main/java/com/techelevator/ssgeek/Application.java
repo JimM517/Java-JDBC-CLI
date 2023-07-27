@@ -26,7 +26,7 @@ public class Application {
 
         //create new instance of each jdbc passing in datasource/db
         CustomerDao customerDao = new JdbcCustomerDao(dataSource);
-        ProductDao productDao = null;
+        ProductDao productDao = new JdbcProductDao(dataSource);
         SaleDao saleDao = null;
         LineItemDao lineItemDao = null;
         //*****************************************************************************************

@@ -327,12 +327,12 @@ public class SSGeekAdminView {
             // This is an update -- make all prompts default to current values
             // Set the id
             newCustomer.setCustomerId(existingCustomer.getCustomerId());
-            newCustomer.setName(existingCustomer.getName());
-            newCustomer.setStreetAddress1(existingCustomer.getStreetAddress1());
-            newCustomer.setStreetAddress2(existingCustomer.getStreetAddress2());
-            newCustomer.setCity(existingCustomer.getCity());
-            newCustomer.setState(existingCustomer.getState());
-            newCustomer.setZipCode(existingCustomer.getZipCode());
+            newCustomer.setName(promptForCustomerName(existingCustomer.getName()));
+            newCustomer.setStreetAddress1(promptForCustomerStreetAddress1(existingCustomer.getStreetAddress1()));
+            newCustomer.setStreetAddress2(promptForCustomerStreetAddress2(existingCustomer.getStreetAddress2()));
+            newCustomer.setCity(promptForCustomerCity(existingCustomer.getCity()));
+            newCustomer.setState(promptForCustomerState(existingCustomer.getState()));
+            newCustomer.setZipCode(promptForCustomerZipCode(existingCustomer.getZipCode()));
         }
         return newCustomer;
     }

@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcProductDao implements ProductDao {
@@ -23,7 +24,14 @@ public class JdbcProductDao implements ProductDao {
 
     @Override
     public List<Product> getProducts() {
-        return null;
+        List<Product> results = new ArrayList<>();
+        String sql = "SELECT * FROM product";
+        SqlRowSet row = jdbcTemplate.queryForRowSet(sql);
+        while(row.next()) {
+            Product product = mapRowToProduct(row);
+            results.add(product);
+        }
+        return results;
     }
 
     @Override
