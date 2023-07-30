@@ -28,7 +28,7 @@ public class Application {
         CustomerDao customerDao = new JdbcCustomerDao(dataSource);
         ProductDao productDao = new JdbcProductDao(dataSource);
         SaleDao saleDao = new JdbcSaleDao(dataSource);
-        LineItemDao lineItemDao = null;
+        LineItemDao lineItemDao = new JdbcLineItemDao(dataSource);
         //*****************************************************************************************
 
         // Create the basic i/o mechanism (the console)
