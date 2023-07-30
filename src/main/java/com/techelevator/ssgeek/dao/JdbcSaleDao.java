@@ -45,27 +45,57 @@ public class JdbcSaleDao implements SaleDao {
 
     @Override
     public List<Sale> getSalesByCustomerId(int customerId) {
-        return null;
+        List<Sale> results = new ArrayList<>();
+        String sql = "SELECT * FROM sale " +
+                    "JOIN customer ON customer.customer_id = sale.customer_id " +
+                    "WHERE sale.customer_id = ? " +
+                    "ORDER BY sale_id";
+        SqlRowSet row = jdbcTemplate.queryForRowSet(sql, customerId);
+        while(row.next()) {
+            Sale sale = mapRowToSale(row);
+            results.add(sale);
+        }
+        return results;
     }
 
     @Override
     public List<Sale> getSalesByProductId(int productId) {
-        return null;
+        List<Sale> results = new ArrayList<>();
+        String sql = "SELECT * FROM sale " +
+                    "JOIN customer ON customer.customer_id = sale.customer_id " +
+                    "JOIN line_item ON line_item.sale_id = sale.sale_id " +
+                    "JOIN product ON product.product_id = line_item.product_id " +
+                    "WHERE product.product_id = ? " +
+                    "ORDER BY sale.sale_id";
+        SqlRowSet row = jdbcTemplate.queryForRowSet(sql, productId);
+        while(row.next()) {
+            Sale sale = mapRowToSale(row);
+            sale.setCustomerName(row.getString("name"));
+            results.add(sale);
+        }
+        return results;
     }
 
     @Override
     public Sale createSale(Sale newSale) {
-        return null;
+        String sql = "INSERT INTO sale (customer_id, sale_date, ship_date) VALUES (?, ?, ?) RETURNING sale_id";
+        int newId = jdbcTemplate.queryForObject(sql, int.class, newSale.getCustomerId(), newSale.getSaleDate(), newSale.getShipDate());
+        return getSale(newId);
     }
 
     @Override
     public void updateSale(Sale updatedSale) {
-
+        String sql = "UPDATE sale SET customer_id = ?, sale_date = ?, ship_date = ? WHERE sale_id = ?";
+        jdbcTemplate.update(sql, updatedSale.getCustomerId(), updatedSale.getSaleDate(), updatedSale.getShipDate(), updatedSale.getSaleId());
     }
 
     @Override
     public void deleteSale(int saleId) {
+        String lineItemQuery = "DELETE FROM line_item WHERE sale_id = ?";
+        jdbcTemplate.update(lineItemQuery, saleId);
 
+        String saleQuery = "DELETE FROM sale WHERE sale_id = ?";
+        jdbcTemplate.update(saleQuery, saleId);
     }
 
     private Sale mapRowToSale(SqlRowSet results) {
